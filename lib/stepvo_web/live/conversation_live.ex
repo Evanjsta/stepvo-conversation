@@ -1,15 +1,3 @@
-local did_change = false
-
-for line in lines do
-  -- Fix the malformed form closing tag
-  if line:match("^%s*</<%.form>%s*$") then
-    print("                </.form>")
-    did_change = true
-  else
-    print(line)
-  end
-end
-
 defmodule StepvoWeb.ConversationLive do
   use StepvoWeb, :live_view
   alias Stepvo.Conversation.Comment

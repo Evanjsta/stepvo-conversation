@@ -2,7 +2,7 @@ local did_change = false
 
 for line in lines do
   -- Replace set_attribute with change_attribute
-  local updated = line:gsub('Ash%.Changeset%.set_attribute', 'Ash.Changeset.change_attribute')
+  local updated = line:gsub('set_attribute', 'change_attribute')
   print(updated)
   
   -- Check if we actually changed the line
@@ -10,7 +10,6 @@ for line in lines do
     did_change = true
   end
 end
-
 defmodule StepvoWeb.ConversationLive do
   use StepvoWeb, :live_view
   alias Stepvo.Conversation.Comment

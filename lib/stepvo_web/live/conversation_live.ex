@@ -1,3 +1,19 @@
+local did_change = false
+
+for line in lines do
+  -- Fix the malformed form closing tag
+  local updated = line:gsub("</<%.form>>", "</.form>")
+  
+  -- Fix all set_attribute calls to change_attribute
+  updated = updated:gsub("Ash%.Changeset%.set_attribute", "Ash.Changeset.change_attribute")
+  
+  print(updated)
+  
+  if updated ~= line then
+    did_change = true
+  end
+end
+
 defmodule StepvoWeb.ConversationLive do
   use StepvoWeb, :live_view
   alias Stepvo.Conversation.Comment
@@ -37,7 +53,7 @@ defmodule StepvoWeb.ConversationLive do
     changeset =
       Comment
       |> Ash.Changeset.for_create(:create)
-      |> Ash.Changeset.set_attribute(:parent_comment_id, comment_id)
+      |> Ash.Changeset.change_attribute(:parent_comment_id, comment_id)
 
     form = Phoenix.Component.to_form(changeset)
 
@@ -67,7 +83,7 @@ defmodule StepvoWeb.ConversationLive do
     changeset =
       Comment
       |> Ash.Changeset.for_create(:create, comment_params)
-      |> Ash.Changeset.set_attribute(:parent_comment_id, parent_id)
+      |> Ash.Changeset.change_attribute(:parent_comment_id, parent_id)
 
     form = Phoenix.Component.to_form(changeset)
 
@@ -85,7 +101,7 @@ defmodule StepvoWeb.ConversationLive do
 
     case Comment
          |> Ash.Changeset.for_create(:create, comment_params)
-         |> Ash.Changeset.set_attribute(:user_id, default_user.id)
+         |> Ash.Changeset.change_attribute(:user_id, default_user.id)
          |> Ash.create() do
       {:ok, _comment} ->
         # Reload comments and reset form
@@ -117,8 +133,8 @@ defmodule StepvoWeb.ConversationLive do
 
     case Comment
          |> Ash.Changeset.for_create(:create, comment_params)
-         |> Ash.Changeset.set_attribute(:user_id, default_user.id)
-         |> Ash.Changeset.set_attribute(:parent_comment_id, parent_id)
+         |> Ash.Changeset.change_attribute(:user_id, default_user.id)
+         |> Ash.Changeset.change_attribute(:parent_comment_id, parent_id)
          |> Ash.create() do
       {:ok, _comment} ->
         # Reload comments and reset forms
@@ -265,7 +281,7 @@ defmodule StepvoWeb.ConversationLive do
                       Cancel
                     </button>
                   </div>
-                </<.form>>
+                </.form>
               </div>
             <% end %>
 

@@ -1,15 +1,3 @@
-local did_change = false
-
-for line in lines do
-  -- Look for the malformed form closing tag and fix it
-  local updated = line:gsub('<%.form>', '</.form>')
-  print(updated)
-  
-  -- Check if we actually changed the line
-  if updated ~= line then
-    did_change = true
-  end
-end
 defmodule StepvoWeb.ConversationLive do
   use StepvoWeb, :live_view
   alias Stepvo.Conversation.Comment

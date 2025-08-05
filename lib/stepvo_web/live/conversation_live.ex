@@ -1,3 +1,15 @@
+local did_change = false
+
+for line in lines do
+  -- Look for the malformed form closing tag and fix it
+  local updated = line:gsub('<%.form>', '</.form>')
+  print(updated)
+  
+  -- Check if we actually changed the line
+  if updated ~= line then
+    did_change = true
+  end
+end
 defmodule StepvoWeb.ConversationLive do
   use StepvoWeb, :live_view
   alias Stepvo.Conversation.Comment
@@ -84,7 +96,7 @@ defmodule StepvoWeb.ConversationLive do
          |> assign(:comments, comments)
          |> assign(:form, Phoenix.Component.to_form(form_params, as: :comment))}
 
-      {:error, changeset} ->
+      {:error, _changeset} ->
         # Convert error back to form format
         form = Phoenix.Component.to_form(comment_params, as: :comment)
         {:noreply, assign(socket, :form, form)}
@@ -119,7 +131,7 @@ defmodule StepvoWeb.ConversationLive do
          |> assign(:show_reply_form, nil)
          |> assign(:reply_forms, %{})}
 
-      {:error, changeset} ->
+      {:error, _changeset} ->
         # Convert error back to form format
         form = Phoenix.Component.to_form(comment_params, as: :comment)
         {:noreply, put_in(socket, [:assigns, :reply_forms, parent_id], form)}
@@ -255,7 +267,7 @@ defmodule StepvoWeb.ConversationLive do
                       Cancel
                     </button>
                   </div>
-                </form>
+                </.form>
               </div>
             <% end %>
 

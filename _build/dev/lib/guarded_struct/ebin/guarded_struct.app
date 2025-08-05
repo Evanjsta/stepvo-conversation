@@ -1,0 +1,13 @@
+{application,guarded_struct,
+             [{modules,['Elixir.GuardedStruct','Elixir.GuardedStruct.Derive',
+                        'Elixir.GuardedStruct.Derive.Parser',
+                        'Elixir.GuardedStruct.Derive.SanitizerDerive',
+                        'Elixir.GuardedStruct.Derive.ValidationDerive',
+                        'Elixir.GuardedStruct.Helper.Extra',
+                        'Elixir.GuardedStruct.Messages']},
+              {compile_env,[{guarded_struct,[message_backend],error}]},
+              {optional_applications,[]},
+              {applications,[kernel,stdlib,elixir,logger,html_sanitize_ex]},
+              {description,"GuardedStruct macro allows to build Structs that provide you with a number of important options Validation, Sanitizing, Constructor"},
+              {registered,[]},
+              {vsn,"0.0.4"}]}.

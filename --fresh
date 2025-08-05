@@ -1,0 +1,30 @@
+==========================
+http://localhost:4000/
+==========================
+
+Conversation
+- -----------
+
+I think Phoenix LiveView is revolutionary for real-time web apps.
+
+bob Score: 0
+
+↑ ↓ Reply
+
+Totally agree! The real-time updates without JavaScript are amazing.
+
+alice Score: 0
+
+↑ ↓ Reply
+
+What's everyone's thoughts on the future of AI?
+
+alice Score: 0
+
+↑ ↓ Reply
+
+I believe AI will augment human capabilities rather than replace them.
+
+bob Score: 0
+
+↑ ↓ Reply

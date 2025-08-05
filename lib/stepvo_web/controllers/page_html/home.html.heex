@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-gray-900">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Stepvo - Hierarchical Conversations</title>
+    <style>
+      body { 
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          margin: 0;
+          padding: 0;
+          background: #111827;
+          color: #f9fafb;
+      }
+      .viewport { 
+          height: 100vh; 
+          overflow: hidden; 
+          position: relative;
+          background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+      }
+      .conversation-space { 
+          width: 200vw; 
+          height: 200vh; 
+          position: relative;
+          transform: translate(0, 0);
+          transition: transform 0.3s ease;
+      }
+      .comment-node {
+          position: absolute;
+          background: #374151;
+          border: 2px solid #4b5563;
+          border-radius: 12px;
+          padding: 16px;
+          width: 280px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+          backdrop-filter: blur(10px);
+      }
+      .comment-content { 
+          margin-bottom: 12px; 
+          line-height: 1.5;
+          color: #e5e7eb;
+      }
+      .comment-meta { 
+          font-size: 12px; 
+          color: #9ca3af; 
+          margin-bottom: 12px;
+          display: flex;
+          justify-content: space-between;
+      }
+      .vote-controls { 
+          display: flex; 
+          gap: 8px; 
+          align-items: center;
+      }
+      .vote-btn {
+          background: #4b5563;
+          border: 1px solid #6b7280;
+          color: #e5e7eb;
+          padding: 6px 8px;
+          border-radius: 6px;
+          cursor: pointer;
+          transition: all 0.2s;
+      }
+      .vote-btn:hover {
+          background: #374151;
+          border-color: #9ca3af;
+      }
+      .vote-btn.upvote:hover { background: #065f46; border-color: #10b981; }
+      .vote-btn.downvote:hover { background: #7f1d1d; border-color: #ef4444; }
+      .reply-btn {
+          background: #1f2937;
+          border: 1px solid #374151;
+          color: #d1d5db;
+          padding: 6px 12px;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 12px;
+          transition: all 0.2s;
+      }
+      .reply-btn:hover {
+          background: #374151;
+          border-color: #6b7280;
+      }
+      .connection-line {
+          stroke: #6b7280;
+          stroke-width: 2;
+          fill: none;
+          opacity: 0.6;
+      }
+      .navigation-hint {
+          position: absolute;
+          top: 20px;
+          right: 20px;
+          background: rgba(55, 65, 81, 0.9);
+          padding: 12px 16px;
+          border-radius: 8px;
+          border: 1px solid #4b5563;
+          color: #d1d5db;
+          font-size: 14px;
+      }
+      .logo {
+          position: absolute;
+          top: 20px;
+          left: 20px;
+          font-size: 24px;
+          font-weight: bold;
+          color: #10b981;
+      }
+      .current-focus {
+          border-color: #10b981;
+          box-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+      }
+    </style>
+  </head>
+  <body class="h-full">
+    <div class="viewport">
+      <div class="logo">Stepvo</div>
+
+      <div class="navigation-hint">
+        ← → ↑ ↓ Navigate • Enter to focus • Space to vote
+      </div>
+
+      <div class="conversation-space">
+        <!-- SVG for connection lines -->
+        <svg
+          width="100%"
+          height="100%"
+          style="position: absolute; top: 0; left: 0; z-index: 1; pointer-events: none;"
+        >
+          <!-- Root to first child -->
+          <path class="connection-line" d="M 400 250 Q 450 300 500 350"></path>
+          <!-- Root to second child -->
+          <path class="connection-line" d="M 400 250 Q 450 300 500 450"></path>
+          <!-- First child to grandchild -->
+          <path class="connection-line" d="M 650 380 Q 700 400 750 420"></path>
+          <!-- Second child to its children -->
+          <path class="connection-line" d="M 650 480 Q 700 500 750 520"></path>
+          <path class="connection-line" d="M 650 480 Q 700 520 750 620"></path>
+        </svg>
+        
+<!-- Root comment -->
+        <div class="comment-node current-focus" style="top: 200px; left: 300px; z-index: 10;">
+          <div class="comment-content">
+            What's everyone's thoughts on the future of AI? I'm particularly interested in how it might change software development and human creativity.
+          </div>
+          <div class="comment-meta">
+            <span>alice • 2h ago</span>
+            <span>Score: +12</span>
+          </div>
+          <div class="vote-controls">
+            <button class="vote-btn upvote">↑</button>
+            <button class="vote-btn downvote">↓</button>
+            <button class="reply-btn">Reply</button>
+          </div>
+        </div>
+        
+<!-- First child comment -->
+        <div class="comment-node" style="top: 320px; left: 600px; z-index: 10;">
+          <div class="comment-content">
+            I believe AI will augment human capabilities rather than replace them. The key is learning to collaborate effectively.
+          </div>
+          <div class="comment-meta">
+            <span>bob • 1h ago</span>
+            <span>Score: +8</span>
+          </div>
+          <div class="vote-controls">
+            <button class="vote-btn upvote">↑</button>
+            <button class="vote-btn downvote">↓</button>
+            <button class="reply-btn">Reply</button>
+          </div>
+        </div>
+        
+<!-- Grandchild comment -->
+        <div class="comment-node" style="top: 420px; left: 900px; z-index: 10;">
+          <div class="comment-content">
+            Exactly! It's like having a really smart pair programming partner.
+          </div>
+          <div class="comment-meta">
+            <span>charlie • 45m ago</span>
+            <span>Score: +3</span>
+          </div>
+          <div class="vote-controls">
+            <button class="vote-btn upvote">↑</button>
+            <button class="vote-btn downvote">↓</button>
+            <button class="reply-btn">Reply</button>
+          </div>
+        </div>
+        
+<!-- Second child comment -->
+        <div class="comment-node" style="top: 420px; left: 600px; z-index: 10;">
+          <div class="comment-content">
+            I think Phoenix LiveView is revolutionary for real-time web apps. The developer experience is incredible.
+          </div>
+          <div class="comment-meta">
+            <span>diana • 90m ago</span>
+            <span>Score: +5</span>
+          </div>
+          <div class="vote-controls">
+            <button class="vote-btn upvote">↑</button>
+            <button class="vote-btn downvote">↓</button>
+            <button class="reply-btn">Reply</button>
+          </div>
+        </div>
+        
+<!-- Child of second comment -->
+        <div class="comment-node" style="top: 520px; left: 900px; z-index: 10;">
+          <div class="comment-content">
+            Totally agree! The real-time updates without JavaScript are amazing.
+          </div>
+          <div class="comment-meta">
+            <span>eve • 30m ago</span>
+            <span>Score: +2</span>
+          </div>
+          <div class="vote-controls">
+            <button class="vote-btn upvote">↑</button>
+            <button class="vote-btn downvote">↓</button>
+            <button class="reply-btn">Reply</button>
+          </div>
+        </div>
+        
+<!-- Another branch -->
+        <div class="comment-node" style="top: 620px; left: 900px; z-index: 10;">
+          <div class="comment-content">
+            The channel abstraction makes real-time features so much easier to implement.
+          </div>
+          <div class="comment-meta">
+            <span>frank • 15m ago</span>
+            <span>Score: +1</span>
+          </div>
+          <div class="vote-controls">
+            <button class="vote-btn upvote">↑</button>
+            <button class="vote-btn downvote">↓</button>
+            <button class="reply-btn">Reply</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Simple navigation simulation
+      let currentX = 0;
+      let currentY = 0;
+      const space = document.querySelector('.conversation-space');
+
+      document.addEventListener('keydown', (e) => {
+          const step = 100;
+          switch(e.key) {
+              case 'ArrowLeft':
+                  currentX += step;
+                  break;
+              case 'ArrowRight':
+                  currentX -= step;
+                  break;
+              case 'ArrowUp':
+                  currentY += step;
+                  break;
+              case 'ArrowDown':
+                  currentY -= step;
+                  break;
+          }
+          space.style.transform = `translate(${currentX}px, ${currentY}px)`;
+      });
+
+      // Simulate vote button interactions
+      document.querySelectorAll('.vote-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+              e.preventDefault();
+              btn.style.background = btn.classList.contains('upvote') ? '#065f46' : '#7f1d1d';
+              setTimeout(() => {
+                  btn.style.background = '#4b5563';
+              }, 200);
+          });
+      });
+    </script>
+  </body>
+</html>

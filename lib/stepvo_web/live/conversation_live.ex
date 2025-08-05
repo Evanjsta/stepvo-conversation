@@ -6,15 +6,13 @@ defmodule StepvoWeb.ConversationLive do
   def mount(_params, _session, socket) do
     comments = load_comments()
 
-    # Create a changeset for new comment form
-    changeset =
-      Comment
-      |> Ash.Changeset.for_create(:create)
+    # Create form params map instead of changeset for Phoenix.Component.to_form
+    form_params = %{"content" => ""}
 
     {:ok,
      socket
      |> assign(:comments, comments)
-     |> assign(:form, Phoenix.Component.to_form(changeset))
+     |> assign(:form, Phoenix.Component.to_form(form_params, as: :comment))
      |> assign(:reply_forms, %{})
      |> assign(:show_reply_form, nil)}
   end
@@ -33,13 +31,9 @@ defmodule StepvoWeb.ConversationLive do
   end
 
   def handle_event("show_reply_form", %{"comment_id" => comment_id}, socket) do
-    # Create a changeset for the reply form
-    changeset =
-      Comment
-      |> Ash.Changeset.for_create(:create)
-      |> Ash.Changeset.set_attribute(:parent_comment_id, comment_id)
-
-    form = Phoenix.Component.to_form(changeset)
+    # Create form params for reply form
+    reply_form_params = %{"content" => ""}
+    form = Phoenix.Component.to_form(reply_form_params, as: :comment)
 
     {:noreply,
      socket
@@ -52,11 +46,9 @@ defmodule StepvoWeb.ConversationLive do
   end
 
   def handle_event("validate_comment", %{"comment" => comment_params}, socket) do
-    changeset =
-      Comment
-      |> Ash.Changeset.for_create(:create, comment_params)
-
-    {:noreply, assign(socket, :form, Phoenix.Component.to_form(changeset))}
+    # Just update the form with the new params for validation display
+    form = Phoenix.Component.to_form(comment_params, as: :comment)
+    {:noreply, assign(socket, :form, form)}
   end
 
   def handle_event(
@@ -64,13 +56,8 @@ defmodule StepvoWeb.ConversationLive do
         %{"comment" => comment_params, "parent_id" => parent_id},
         socket
       ) do
-    changeset =
-      Comment
-      |> Ash.Changeset.for_create(:create, comment_params)
-      |> Ash.Changeset.set_attribute(:parent_comment_id, parent_id)
-
-    form = Phoenix.Component.to_form(changeset)
-
+    # Update the reply form with new params
+    form = Phoenix.Component.to_form(comment_params, as: :comment)
     {:noreply, put_in(socket, [:assigns, :reply_forms, parent_id], form)}
   end
 
@@ -90,15 +77,17 @@ defmodule StepvoWeb.ConversationLive do
       {:ok, _comment} ->
         # Reload comments and reset form
         comments = load_comments()
-        changeset = Comment |> Ash.Changeset.for_create(:create)
+        form_params = %{"content" => ""}
 
         {:noreply,
          socket
          |> assign(:comments, comments)
-         |> assign(:form, Phoenix.Component.to_form(changeset))}
+         |> assign(:form, Phoenix.Component.to_form(form_params, as: :comment))}
 
       {:error, changeset} ->
-        {:noreply, assign(socket, :form, Phoenix.Component.to_form(changeset))}
+        # Convert error back to form format
+        form = Phoenix.Component.to_form(comment_params, as: :comment)
+        {:noreply, assign(socket, :form, form)}
     end
   end
 
@@ -131,7 +120,8 @@ defmodule StepvoWeb.ConversationLive do
          |> assign(:reply_forms, %{})}
 
       {:error, changeset} ->
-        form = Phoenix.Component.to_form(changeset)
+        # Convert error back to form format
+        form = Phoenix.Component.to_form(comment_params, as: :comment)
         {:noreply, put_in(socket, [:assigns, :reply_forms, parent_id], form)}
     end
   end
@@ -265,7 +255,7 @@ defmodule StepvoWeb.ConversationLive do
                       Cancel
                     </button>
                   </div>
-                </.form>
+                </form>
               </div>
             <% end %>
 
